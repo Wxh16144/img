@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="keywords" content="精选头像,头像,head,portrait,wxh,wuxiaohong,wuxh,吴小红" />
+  <meta name="description" content="常用头像" />
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1.0, maximum-scale=1.0, minimum-scale=1, user-scalable=no" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@4.0.1/reset.min.css">
+  <link rel="stylesheet" href="assets/img_style.css?v=3">
+</head>
+
+<body>
+  <div id="root">
+    <ul class="container">
+      <li is="img-item" v-for="(img, index) in imgList" :key="index" :img="img" />
+    </ul>
+    <div class="easter-egg" @click="easterEgg">{{ title }}</div>
+  </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-lazyload@1.3.2/vue-lazyload.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<script src="assets/img_index.js?v=3"></script>
+<script src="./assets/create_footer.js"></script>
+
+</html>
