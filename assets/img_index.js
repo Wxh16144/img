@@ -1,7 +1,7 @@
 ;(function(win){
   Vue.use(VueLazyload,{
-    loading:'./loading.gif',
-    error:'./error.png'
+    loading:'assets/loading.gif',
+    error:'assets/error.png'
   });
 
   Vue.component('img-item', {
@@ -72,7 +72,7 @@
     }
   });
 
-  win.vm = new Vue({
+  /*win.vm =*/ new Vue({
     el:'#root',
     data:{
       // url:'http://wxhboy.cn/img/'

@@ -6,6 +6,18 @@ body {
 
   &.true {
     background-color: black;
+
+    #root {
+      .container {
+        .img-item {
+          box-shadow: none !important;
+
+          &:hover {
+            box-shadow: none !important;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -20,9 +32,9 @@ body {
   line-height: 16px;
   text-align: center;
   cursor: pointer;
-  background-color: var(--color,white);
-  color: var(--bg,black);
-  transform: rotate(45deg)  translate3d(28px ,-14px,0)
+  background-color: var(--color, white);
+  color: var(--bg, black);
+  transform: rotate(45deg) translate3d(28px, -14px, 0)
 }
 
 :root {
@@ -91,8 +103,9 @@ body {
     }
   }
 }
-@media (max-width: 575.98px) { 
-  #root{
+
+@media (max-width: 575.98px) {
+  #root {
     user-select: none;
   }
 }

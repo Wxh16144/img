@@ -6,6 +6,12 @@ body {
 body.true {
   background-color: black;
 }
+body.true #root .container .img-item {
+  box-shadow: none !important;
+}
+body.true #root .container .img-item:hover {
+  box-shadow: none !important;
+}
 .easter-egg {
   user-select: none;
   position: fixed;
