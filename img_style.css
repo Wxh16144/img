@@ -1,9 +1,29 @@
 body {
   padding: 0 10px;
-  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '寰蒋闆呴粦', Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   background-color: #f0f5ff;
 }
+body.true {
+  background-color: black;
+}
+.easter-egg {
+  user-select: none;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  width: 100px;
+  height: 16px;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--color, white);
+  color: var(--bg, black);
+  transform: rotate(45deg) translate3d(28px, -14px, 0);
+}
 :root {
+  --bg: white;
+  --color: black;
   --border-color: #69c0ff;
   --shadow-color: #bae7ff;
 }
@@ -15,7 +35,7 @@ body {
   box-sizing: border-box;
   padding: 10px;
   display: inline-block;
-  background-color: white;
+  background-color: var(--bg, white);
   border-radius: 5px;
   margin: 10px 0px 10px 0;
   width: 100%;
@@ -52,10 +72,16 @@ body {
   border-radius: 0 0 0 5px;
   font-size: 16px;
   outline: none;
+  color: var(--color, black);
 }
 #root .container .img-item .btn-box .btn + .btn {
   border-left: 0;
   border-radius: 0 0 5px 0;
+}
+@media (max-width: 575.98px) {
+  #root {
+    user-select: none;
+  }
 }
 @media (min-width: 576px) and (max-width: 991.98px) {
   body {
@@ -170,7 +196,7 @@ body {
   }
   #root .container .img-item .btn-box .btn:hover {
     background-color: var(--border-color);
-    color: white;
+    color: var(--bg, white);
   }
   #root .container .img-item .btn-box .btn + .btn {
     border-radius: 0 0 8px 0;

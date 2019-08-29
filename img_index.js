@@ -24,7 +24,7 @@
             name:'wxh',
             url:'https://avatars0.githubusercontent.com/u/32004925',
             msg:`Sorry, picture wxh is not found .`,
-            title:'Wuxiaohong'
+            title:'WuXiaohong'
           }
         }
       }
@@ -44,26 +44,26 @@
       label_click({target}){
         let content = this.HTMLEncode(this.img_element_html)
         layer.tips(content, target, {
-          tips: [1, this.randomColor()] //还可配置颜色
+          tips: [1, this.randomColor()] 
         });
         // target.setAttribute('data-text',this.img_element_html);
      },
      HTMLEncode(html) {
-      var temp = document.createElement("div");
+      let temp = document.createElement("div");
       (temp.textContent != null) ? (temp.textContent = html) : (temp.innerText = html);
-      var output = temp.innerHTML;
+      let output = temp.innerHTML;
       temp = null;
       return output;
     },
     randomColor(n =3){
-      var v = Math.floor(Math.random()*6)
-      return ['#7cb305','#722ed1','#ad8b00','#13c2c2','#eb2f96','#1890ff'][v] || 'red'
+      let v = Math.floor(Math.random()*6)
+      return ['#7cb305','#722ed1','#ad8b00','#13c2c2','#eb2f96','#1890ff'][v] || 'red';
       // return "#" + Math.random().toString(16).slice(-n)
     }
     },
     computed:{
       img_element_html(){
-        var img = document.createElement('img');
+        let img = document.createElement('img');
         img.src = this.img.url;
         img.title = this.img.title;
         img.alt = this.img.msg;
@@ -72,19 +72,24 @@
     }
   });
 
-  var vm = new Vue({
+  win.vm = new Vue({
     el:'#root',
     data:{
       // url:'http://wxhboy.cn/img/'
-      url:''
+      url:'',
+      first_pic: false,
     },
     methods:{
-     
+      easterEgg(){
+        this.first_pic = ! this.first_pic;
+      }
     },
     computed: {
       imgList (){
-        var  header = Array.from( Array(23),(_,i)=>String.fromCharCode(97+i)+'.jpg');
-        var  footer = Array.from( Array(3),(_,i)=>String.fromCharCode(120+i)+'.gif');
+        let number = this.first_pic ? 23 : 22;
+        let start =this.first_pic ? 97 : 98;
+        let  header = Array.from( Array(number),(_,i)=>String.fromCharCode(start+i)+'.jpg');
+        let  footer = Array.from( Array(3),(_,i)=>String.fromCharCode(120+i)+'.gif');
         return Array.prototype.concat.call(header,footer).map(v=>{
           let name =  v.split('.')[0];
           return  {
@@ -94,11 +99,14 @@
             msg:`Sorry, picture ${name} is not found.`
           }
         })
+      },
+      title(){
+        return this.first_pic ?'light' :  'dark' ;
       }
     },
     mounted() {
       this.$nextTick(()=>{
-        var clipboard  = new ClipboardJS('.btn',{
+        let clipboard  = new ClipboardJS('.btn',{
           text: function(trigger) {
             return trigger.getAttribute('data-text');
         }
@@ -112,5 +120,14 @@
         });
       })
     },
+    watch:{
+      first_pic(val){
+        let rootElement = document.documentElement;
+        let color = ['white','black'];
+        rootElement.style.setProperty('--bg',color[~~val] );
+        rootElement.style.setProperty('--color',color[~~!val] );
+        document.body.classList = (val).toString();
+      }
+    }
   })
 }(window));
