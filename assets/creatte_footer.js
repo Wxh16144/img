@@ -54,6 +54,4 @@ a_el.innerHTML = option.Record.number;
 p_el.appendChild(a_el);
 footer_el.appendChild(p_el);
 document.body.insertAdjacentElement('beforeend',footer_el)
-// document.body.appendChild(footer_el);
-console.log('使用javasript创建footer页脚，代码地址:http://wxhboy.cn/public/js/create_footer.js');
 }(window));

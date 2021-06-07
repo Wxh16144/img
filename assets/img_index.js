@@ -75,8 +75,7 @@
   /*win.vm =*/ new Vue({
     el:'#root',
     data:{
-      // url:'http://wxhboy.cn/img/'
-      url:'',
+      url:'http://wxhboy.cn/img/',
       first_pic: false,
     },
     methods:{
