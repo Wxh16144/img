@@ -1,10 +1,18 @@
+/**!
+ * author: wuxiaohong<wxh1220@gmail.com>
+ * version: 1.0.0
+ * copyright: (c) 2018 wuxiaohong
+ */
 ; (function (win) {
   var option = Object.assign({
-    copyright_start: ' ©2018',
+    copyright_start: '©2018',
+    prefix: '',
+    suffix: '',
     record: {
       url: 'https://beian.miit.gov.cn/',
-      number: '浙ICP备17045739号-2'
-    }
+      number: '浙ICP备17045739号-2',
+    },
+    fixed: false
   }, win.footer_option)
 
   var setStyle = function (el, obj) {
@@ -23,17 +31,24 @@
     return el
   };
 
-  var footer_el = setStyle('footer', {
-    // position:'fixed',
-    // bottom:0,
-    // height: '32px',
+  var footer_style = {
     margin: '10px 0',
     width: '100%',
     textAlign: 'center',
     color: '#999',
     fontSize: '12px',
     zIndex: 996
-  });
+  }
+
+  if (option.fixed)
+    footer_style = {
+      ...footer_style,
+      position: 'fixed',
+      bottom: 0,
+      height: '32px',
+    }
+
+  var footer_el = setStyle('footer', footer_style);
 
   var p_el = setStyle('p', {});
 
@@ -48,7 +63,7 @@
     title: option.record.number,
   })
 
-  p_el.innerHTML = `${option.copyright_start}-${(new Date()).getFullYear()} ${document.domain.split('.').slice(-2).join('.')}  `;
+  p_el.innerHTML = `${option.prefix}${option.copyright_start}-${(new Date()).getFullYear()} ${document.domain.split('.').slice(-2).join('.')}${option.suffix}`;
   a_el.innerHTML = option.record.number;
 
   p_el.appendChild(a_el);
