@@ -17,6 +17,13 @@
 
 <body>
   <div id="root">
+    <label class="url-type">
+      <select v-model="urlType">
+        <option>Auto</option>
+        <option>GitHub</option>
+        <option>jsDelivr</option>
+      </select>
+    </label>
     <ul class="container">
       <li is="img-item" v-for="(img, index) in imgList" :key="index" :img="img" />
     </ul>

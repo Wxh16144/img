@@ -78,8 +78,8 @@
   /*win.vm =*/ new Vue({
     el:'#root',
     data:{
-      url: `${origin}${pathname}`,
       first_pic: false,
+      urlType: 'Auto'
     },
     methods:{
       easterEgg(){
@@ -87,6 +87,16 @@
       }
     },
     computed: {
+      url(){
+        switch(this.urlType){
+          case 'Auto':
+            return `${origin}${pathname.replace(/\w+\.html/, '')}`;
+          case 'GitHub':
+            return '//raw.githubusercontent.com/Wxh16144/img/main/'
+          case 'jsDelivr':
+            return '//cdn.jsdelivr.net/gh/Wxh16144/img/'
+        }
+      },
       imgList (){
         let number = this.first_pic ? 23 : 22;
         let start =this.first_pic ? 97 : 98;

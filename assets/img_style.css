@@ -27,6 +27,51 @@ body.true #root .container .img-item:hover {
   color: var(--bg, black);
   transform: rotate(45deg) translate3d(28px, -14px, 0);
 }
+label.url-type {
+  margin-top: 24px;
+  position: relative;
+  display: inline-block;
+}
+label.url-type:before {
+  content: '';
+  height: 31px;
+  position: absolute;
+  right: 7px;
+  top: 3px;
+  width: 22px;
+  background-color: var(--bg, black);
+  color: var(--color, white);
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  pointer-events: none;
+  display: block;
+}
+label.url-type:after {
+  content: " ";
+  position: absolute;
+  right: 15px;
+  top: 46%;
+  margin-top: -3px;
+  z-index: 2;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6.9px 4px 0 4px;
+  border-color: #aaa transparent transparent transparent;
+  pointer-events: none;
+}
+label.url-type select {
+  appearance: none;
+  padding: 0 30px 0 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  line-height: 36px;
+  height: 36px;
+  background-color: var(--bg, black);
+  color: var(--color, white);
+  margin: 0 5px 5px 0;
+  min-width: 180px;
+}
 :root {
   --bg: white;
   --color: black;
@@ -87,6 +132,10 @@ body.true #root .container .img-item:hover {
 @media (max-width: 575.98px) {
   #root {
     user-select: none;
+  }
+  label.url-type,
+  label.url-type > select {
+    width: 100%;
   }
 }
 @media (min-width: 576px) and (max-width: 991.98px) {
