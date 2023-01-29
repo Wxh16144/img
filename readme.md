@@ -21,6 +21,12 @@ git clone --depth 1 https://github.com/Wxh16144/img.git && cd img &&\
 docker-compose up -d
 ```
 
+or
+
+```bash
+docker run --rm -d -p 8080 wxh16144/img # 浏览器中打开 http://127.0.0.1:8080/
+```
+
 ## Build Docker Image
 
 ```bash
