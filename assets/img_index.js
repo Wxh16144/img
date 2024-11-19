@@ -14,8 +14,8 @@
           <img ref="wxhimg" class="img" v-lazy="img.url" :alt="img.msg" :title="img.title"/>
         </div>
         <div class="btn-box">
-          <button class="btn" data-clipboard-action="copy" :data-text="img.url" @mouseover="link_click">复制链接</button>
-          <button class="btn" data-clipboard-action="copy" :data-text="img_element_html" @mouseover="label_click">复制标签</button>
+          <button class="btn" data-clipboard-action="copy" :data-text="img.url">复制链接</button>
+          <button class="btn" data-clipboard-action="copy" :data-text="img_element_html">复制标签</button>
         </div>
       </li>
     `,
@@ -38,19 +38,6 @@
       }
     },
     methods: {
-      link_click({target}){
-        layer.tips(this.img.url, target, {
-          tips: [1, this.randomColor()] //还可配置颜色
-        });
-        // target.setAttribute('data-text',this.img.url);
-      },
-      label_click({target}){
-        let content = this.HTMLEncode(this.img_element_html)
-        layer.tips(content, target, {
-          tips: [1, this.randomColor()] 
-        });
-        // target.setAttribute('data-text',this.img_element_html);
-     },
      HTMLEncode(html) {
       let temp = document.createElement("div");
       (temp.textContent != null) ? (temp.textContent = html) : (temp.innerText = html);
@@ -118,17 +105,10 @@
     },
     mounted() {
       this.$nextTick(()=>{
-        let clipboard  = new ClipboardJS('.btn',{
+        new ClipboardJS('.btn',{
           text: function(trigger) {
             return trigger.getAttribute('data-text');
         }
-        });
-        clipboard.on('success', (e) =>{
-          layer.msg('复制成功')
-        });
-      
-        clipboard.on('error', (e)=> {
-          layer.msg('复制失败')
         });
       })
     },
