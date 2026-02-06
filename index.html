@@ -124,9 +124,8 @@
     };
 
     const getImageList = () => {
-      const isFirstPicSet = isDarkMode; // 如果需要其他逻辑可以在这里添加
-      const number = isFirstPicSet ? 23 : 22;
-      const start = isFirstPicSet ? 97 : 98;
+      const number = 23;
+      const start = 97;
       const header = Array.from(Array(number), (_, i) => String.fromCharCode(start + i) + '.jpg');
       const footer = Array.from(Array(3), (_, i) => String.fromCharCode(120 + i) + '.gif');
       return [...header, ...footer].map(v => {
