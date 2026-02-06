@@ -12,42 +12,321 @@
   <meta name="viewport"
     content="width=device-width,initial-scale=1.0, maximum-scale=1.0, minimum-scale=1, user-scalable=no" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@4.0.1/reset.min.css">
-  <link rel="stylesheet" href="assets/img_style.css?v=3">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <style type="text/css">
+    .easter-egg {
+      user-select: none;
+      position: fixed;
+      right: 0px;
+      top: 0px;
+      width: 100px;
+      height: 16px;
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+      cursor: pointer;
+      transform: rotate(45deg) translate3d(28px, -14px, 0);
+      z-index: 10;
+    }
+  </style>
 </head>
 
-<body>
-  <div id="root">
-    <label class="url-type">
-      <select v-model="urlType">
-        <option>Auto</option>
-        <option>GitHub</option>
-        <option>jsDelivr</option>
-      </select>
+<body class="bg-gray-100 dark:bg-black">
+  <div id="root" class="p-2.5">
+    <label class="url-type" data-testid="url-type-label">
     </label>
-    <ul class="container">
-      <li is="img-item" v-for="(img, index) in imgList" :key="index" :img="img" />
+    <ul class="container" data-testid="image-container">
     </ul>
-    <div class="easter-egg" @click="easterEgg">{{ title }}</div>
+    <div class="easter-egg bg-white text-black dark:bg-black dark:text-white" data-testid="easter-egg"></div>
   </div>
 </body>
 
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue-lazyload@1.3.2/vue-lazyload.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-<!-- <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script> -->
-<script src="assets/img_index.js?v=3"></script>
+
 <script>
-  var footer_option = {
-    prefix: `
-    图源互联网，侵删联系:
-    <a href="mailto:wxh16144@qq.com">wxh16144@qq.com</a>
-    <br />
-    <br />
-    `,
-  }
+  ; (function (win) {
+    const doc = win.document;
+    const imageContainer = doc.querySelector('.container');
+    const easterEgg = doc.querySelector('.easter-egg');
+    const urlTypeLabel = doc.querySelector('.url-type');
+
+    // 系统暗黑模式查询
+    const darkModeQuery = win.matchMedia('(prefers-color-scheme: dark)');
+    let isDarkMode = darkModeQuery.matches;
+    let urlType = 'Auto';
+
+    // 仓库配置
+    const repoConfig = {
+      owner: 'Wxh16144',
+      repo: 'img',
+      branch: 'main',
+    };
+
+    // CDN 配置策略
+    const cdnStrategies = {
+      github: () => {
+        const { owner, repo, branch } = repoConfig;
+        const slug = `${owner}/${repo}`;
+        return {
+          'Auto': 'Auto', // 特殊情况
+          'GitHub': `https://raw.githubusercontent.com/${slug}/${branch}/`,
+          'jsDelivr': `https://cdn.jsdelivr.net/gh/${slug}/`,
+          'Statically': `https://cdn.statically.io/gh/${slug}/${branch}/`,
+          'GitHack': `https://raw.githack.com/${slug}/${branch}/`,
+          'GitHub Pages': `https://${owner.toLowerCase()}.github.io/${repo}/`,
+          // 'Combinatronics': `https://combinatronics.com/${slug}/${branch}/`,
+        };
+      },
+      npm: (pkg) => {
+        return {
+          'unpkg': `https://unpkg.com/${pkg}/`,
+          'jsDelivr NPM': `https://cdn.jsdelivr.net/npm/${pkg}/`,
+          'npmmirror': `https://registry.npmmirror.com/${pkg}/latest/files/`,
+        };
+      }
+    };
+
+    const cdnConfig = {
+      ...cdnStrategies.github(),
+      ...cdnStrategies.npm('@wuxh/img'),
+    };
+
+    // 生成原生 Select 元素
+    const urlTypeSelect = doc.createElement('select');
+    urlTypeSelect.id = 'url-type-select';
+    urlTypeSelect.setAttribute('data-testid', 'url-type-select');
+    urlTypeSelect.className = 'w-full md:w-auto px-4 py-2 border border-gray-300 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200';
+
+    Object.keys(cdnConfig).forEach(key => {
+      const option = doc.createElement('option');
+      option.value = key;
+      option.textContent = key;
+      urlTypeSelect.appendChild(option);
+    });
+
+    urlTypeSelect.addEventListener('change', (e) => {
+      urlType = e.target.value;
+      renderImages();
+    });
+
+    urlTypeLabel.appendChild(urlTypeSelect);
+
+    const getBaseUrl = () => {
+      if (urlType === 'Auto') {
+        const { origin, pathname } = win.location;
+        return `${origin}${pathname.replace(/\w+\.html/, '')}`;
+      }
+      return cdnConfig[urlType] || '';
+    };
+
+    const getImageList = () => {
+      const isFirstPicSet = isDarkMode; // 如果需要其他逻辑可以在这里添加
+      const number = isFirstPicSet ? 23 : 22;
+      const start = isFirstPicSet ? 97 : 98;
+      const header = Array.from(Array(number), (_, i) => String.fromCharCode(start + i) + '.jpg');
+      const footer = Array.from(Array(3), (_, i) => String.fromCharCode(120 + i) + '.gif');
+      return [...header, ...footer].map(v => {
+        const name = v.split('.')[0];
+        return {
+          name,
+          url: getBaseUrl() + v,
+          title: `Picture ${name}`,
+          msg: `Sorry, picture ${name} is not found.`,
+        };
+      });
+    };
+
+    const downloadImage = (url, filename) => {
+      const a = doc.createElement('a');
+      a.href = url;
+      a.download = filename;
+      doc.body.appendChild(a);
+      a.click();
+      doc.body.removeChild(a);
+    };
+
+    const renderImages = () => {
+      imageContainer.innerHTML = '';
+      const imgList = getImageList();
+      const lazyLoadObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.classList.remove('lazy');
+            observer.unobserve(img);
+          }
+        });
+      });
+
+      imgList.forEach((imgData, index) => {
+        const listItem = doc.createElement('li');
+        listItem.className = 'bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl overflow-hidden transform hover:-translate-y-1 transition-all duration-300';
+        listItem.setAttribute('data-testid', `img-item-${index}`);
+
+        const imgBox = doc.createElement('div');
+        // 使用 padding hack 强制保持 1:1 的宽高比，以确保跨浏览器/版本的兼容性
+        imgBox.className = 'relative w-full pt-[100%]';
+
+        const img = doc.createElement('img');
+        img.className = 'absolute top-0 left-0 w-full h-full object-cover bg-gray-200 dark:bg-gray-700 lazy';
+        img.src = 'assets/loading.gif';
+        img.dataset.src = imgData.url;
+        img.alt = imgData.msg;
+        img.title = imgData.title;
+        img.onerror = () => { img.src = 'assets/error.png'; };
+        img.setAttribute('data-testid', `img-${index}`);
+
+        imgBox.appendChild(img);
+        lazyLoadObserver.observe(img);
+
+        const btnBox = doc.createElement('div');
+        btnBox.className = 'grid grid-cols-3';
+
+        const createButton = (text, testid, clipboardText = null) => {
+          const button = doc.createElement('button');
+          button.className = 'py-2 text-center text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200';
+          button.textContent = text;
+          button.setAttribute('data-testid', testid);
+
+          if (clipboardText) {
+            button.addEventListener('click', async () => {
+              try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                  await navigator.clipboard.writeText(clipboardText);
+                } else {
+                  // 针对旧浏览器的降级处理
+                  const textArea = doc.createElement("textarea");
+                  textArea.value = clipboardText;
+                  textArea.style.position = "fixed";
+                  textArea.style.left = "-9999px";
+                  doc.body.appendChild(textArea);
+                  textArea.focus();
+                  textArea.select();
+                  try {
+                    doc.execCommand('copy');
+                  } catch (err) {
+                    console.error('Fallback: Oops, unable to copy', err);
+                    throw err;
+                  }
+                  doc.body.removeChild(textArea);
+                }
+
+                const originalText = button.textContent;
+                button.textContent = '已复制!';
+                button.classList.add('text-green-600', 'dark:text-green-400');
+                setTimeout(() => {
+                  button.textContent = originalText;
+                  button.classList.remove('text-green-600', 'dark:text-green-400');
+                }, 2000);
+              } catch (err) {
+                console.error('Failed to copy text: ', err);
+                const originalText = button.textContent;
+                button.textContent = '失败';
+                button.classList.add('text-red-600', 'dark:text-red-400');
+                setTimeout(() => {
+                  button.textContent = originalText;
+                  button.classList.remove('text-red-600', 'dark:text-red-400');
+                }, 2000);
+              }
+            });
+          }
+          return button;
+        }
+
+        const copyLinkBtn = createButton('复制链接', `copy-link-btn-${index}`, imgData.url);
+        const copyTagBtn = createButton('复制标签', `copy-tag-btn-${index}`, `<img src="${imgData.url.replace(/^https?:/, '')}" title="${imgData.title}" alt="${imgData.msg}">`);
+        const downloadBtn = createButton('下载', `download-btn-${index}`);
+        downloadBtn.addEventListener('click', () => downloadImage(imgData.url, imgData.name));
+
+        btnBox.appendChild(copyLinkBtn);
+        btnBox.appendChild(copyTagBtn);
+        btnBox.appendChild(downloadBtn);
+
+        listItem.appendChild(imgBox);
+        listItem.appendChild(btnBox);
+        imageContainer.appendChild(listItem);
+      });
+    };
+
+    const toggleTheme = () => {
+      isDarkMode = !isDarkMode;
+
+      if (isDarkMode) {
+        doc.documentElement.classList.add('dark');
+      } else {
+        doc.documentElement.classList.remove('dark');
+      }
+      easterEgg.textContent = isDarkMode ? 'light' : 'dark';
+      renderImages();
+    };
+
+    easterEgg.addEventListener('click', toggleTheme);
+
+    // 监听系统主题变化
+    darkModeQuery.addEventListener('change', (e) => {
+      isDarkMode = e.matches;
+      if (isDarkMode) {
+        doc.documentElement.classList.add('dark');
+      } else {
+        doc.documentElement.classList.remove('dark');
+      }
+      easterEgg.textContent = isDarkMode ? 'light' : 'dark';
+      renderImages();
+    });
+
+    // 初始渲染
+    if (isDarkMode) {
+      doc.documentElement.classList.add('dark');
+    } else {
+      doc.documentElement.classList.remove('dark');
+    }
+    easterEgg.textContent = isDarkMode ? 'light' : 'dark';
+
+    // 使用 auto-fill 和 minmax 根据屏幕宽度自动调整列数
+    imageContainer.className = 'grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6 mt-6';
+    renderImages();
+
+    // 页脚逻辑
+    const renderFooter = () => {
+      const footer = doc.createElement('footer');
+      footer.className = 'text-center text-gray-500 text-xs py-8 dark:text-gray-400';
+      footer.setAttribute('data-testid', 'footer');
+
+      const prefix = `
+        图源互联网，侵删联系:
+        <a href="mailto:wxh16144@qq.com" class="text-blue-500 hover:underline dark:text-blue-400">wxh16144@qq.com</a>
+        <br />
+        <br />
+      `;
+
+      // 如果 document.domain 为空（例如本地文件），则使用默认值
+      const domain = doc.domain ? doc.domain.split('.').slice(-2).join('.') : 'wxh16144';
+      const copyright = `©2018-${new Date().getFullYear()} ${domain} `;
+      const recordUrl = 'https://beian.miit.gov.cn/';
+      const recordNumber = '浙ICP备17045739号-2';
+
+      const p = doc.createElement('p');
+      p.innerHTML = prefix + copyright;
+
+      const recordLink = doc.createElement('a');
+      recordLink.href = recordUrl;
+      recordLink.target = '_blank';
+      recordLink.textContent = recordNumber;
+      recordLink.className = 'hover:underline ml-1';
+
+      p.appendChild(recordLink);
+      footer.appendChild(p);
+      doc.body.appendChild(footer);
+    };
+
+    renderFooter();
+
+  }(window));
 </script>
-<script src="./assets/create_footer.js"></script>
 
 </html>
